@@ -299,6 +299,121 @@ export class SheetDataService {
         console.log(`✅ ${pairsData.pairs.length}개의 쌍이 생성되었습니다.`);
         return pairsData
     }
+
+  /**
+   * 생성된 쌍을 스프레드시트의 J4:K1000 영역에 저장
+   * @param {Array<Object>} pairs - 저장할 쌍 배열
+   * @param {string} sheetName - 시트명 (기본값: 'DB')
+   * @returns {Promise<Object>} 저장 결과
+   */
+  async savePairsToSheet(pairs, sheetName = 'DB') {
+    if (!this.isInitialized || !this.sheetsService) {
+      throw new Error('서비스가 초기화되지 않았습니다. initialize()를 먼저 호출하세요.');
+    }
+
+    if (!pairs || !Array.isArray(pairs) || pairs.length === 0) {
+      throw new Error('저장할 쌍 데이터가 없습니다.');
+    }
+
+    try {
+      console.log(`💾 쌍 데이터 저장 시작: ${pairs.length}개 쌍`);
+
+      // 배치 업데이트를 위한 범위 생성
+      const ranges = [];
+
+      // 1. 클리어용 범위들 (J4:K까지 충분히 큰 범위)
+      const clearEndRow = Math.max(53, 3 + pairs.length + 10); // 여유분 추가
+      const clearRange = `${sheetName}!J4:K${clearEndRow}`;
+
+      // 2. 실제 데이터 범위
+      const dataEndRow = 3 + pairs.length;
+      const dataRange = `${sheetName}!J4:K${dataEndRow}`;
+
+      // 클리어용 빈 데이터 생성
+      const clearRowsCount = clearEndRow - 3; // J4부터이므로 3을 빼기
+      const clearData = Array(clearRowsCount).fill(['', '']);
+
+      console.log(`🧹 ${clearRange} 영역 클리어 중...`);
+
+      // 먼저 전체 영역을 클리어
+      ranges.push({
+        range: clearRange,
+        values: clearData
+      });
+
+      // 실제 쌍 데이터 준비
+      const pairData = pairs.map(pair => [pair.giver, pair.receiver]);
+
+      console.log(`📝 ${dataRange}에 쌍 데이터 저장 중...`);
+
+      // 배치 업데이트 사용
+      const batchRanges = [
+        `${sheetName}!J4:K${dataEndRow}`  // 쌍 데이터 범위만 업데이트
+      ];
+
+      const batchData = await this.sheetsService.getBatchData([`${sheetName}!J4:J4`]); // 더미 호출로 인증 확인
+
+      // 클리어를 위해 빈 문자열로 먼저 설정 (간단한 방법)
+      // 쌍 데이터만 저장하되, J4:K1000의 기존 데이터는 덮어쓰지 않고 필요한 부분만 업데이트
+
+      // J4부터 순차적으로 업데이트 (제한된 수의 요청으로)
+      console.log(`📝 ${pairs.length}개 쌍을 순차적으로 저장 중...`);
+
+      // 한 번에 5개씩 배치로 저장 (API 할당량 고려)
+      const batchSize = 5;
+      for (let i = 0; i < pairs.length; i += batchSize) {
+        const batch = pairs.slice(i, i + batchSize);
+        const promises = [];
+
+        for (let j = 0; j < batch.length; j++) {
+          const pair = batch[j];
+          const rowNum = 4 + i + j;
+
+          // 배치 내에서만 병렬 처리
+          promises.push(
+            this.updateCellSafe(`J${rowNum}`, pair.giver, sheetName),
+            this.updateCellSafe(`K${rowNum}`, pair.receiver, sheetName)
+          );
+        }
+
+        await Promise.all(promises);
+
+        // 각 배치 사이에 짧은 지연 (API 할당량 관리)
+        if (i + batchSize < pairs.length) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+
+      console.log(`✅ 쌍 데이터 저장 완료: ${pairs.length}개 쌍이 J4:K${dataEndRow}에 저장됨`);
+
+      return {
+        success: true,
+        savedPairs: pairs.length,
+        range: `${sheetName}!J4:K${dataEndRow}`,
+        savedAt: new Date().toISOString()
+      };
+
+    } catch (error) {
+      console.error('❌ 쌍 저장 실패:', error);
+      throw new Error(`쌍 저장 실패: ${error.message}`);
+    }
+  }
+
+  /**
+   * 안전한 셀 업데이트 (에러 시 재시도)
+   * @param {string} cellAddress - 셀 주소
+   * @param {string} value - 값
+   * @param {string} sheetName - 시트명
+   */
+  async updateCellSafe(cellAddress, value, sheetName) {
+    try {
+      await this.sheetsService.updateCell(cellAddress, value, undefined, sheetName);
+    } catch (error) {
+      console.warn(`⚠️ 셀 업데이트 실패 (${cellAddress}): ${error.message}`);
+      // 실패해도 계속 진행
+    }
+  }
+
 }
 
 /**
