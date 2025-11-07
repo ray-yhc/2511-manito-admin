@@ -1,105 +1,79 @@
 import { useState, useEffect } from 'react';
-import {
-  createGoogleSheetsService,
-  parseServiceAccountCredentials,
-  createSheetConfig
-} from '../sheetServices';
+import { getSheetDataService } from '../services/sheetDataService';
 
 function SheetDataViewer() {
-  const [sheetsService, setSheetsService] = useState(null);
-  const [initError, setInitError] = useState(null);
+  const [dataService] = useState(() => getSheetDataService());
   const [data, setData] = useState({
     normals: [],
     newbies: [],
     leaders: [],
-    filterPairs: []
+    filterPairs: [],
+    metadata: null
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 스프레드시트 서비스 초기화
+  // 초기 데이터 로드
   useEffect(() => {
-    try {
-      const credentials = parseServiceAccountCredentials('VITE_SERVICE_ACCOUNT_CREDENTIALS');
-      const config = createSheetConfig({
-        spreadsheetId: '1IbHBh5SACa505qLB6eNZEARwRofDme_p1NmyRCL7xPA',
-        sheetName: 'DB',
-        range: 'A1:Z1000'
-      });
-
-      const service = createGoogleSheetsService(config, credentials);
-      setSheetsService(service);
-    } catch (error) {
-      setInitError(`서비스 초기화 실패: ${error.message}`);
-    }
+    loadData();
   }, []);
 
-  // 데이터 가져오기 함수
-  const fetchData = async () => {
-    if (!sheetsService) return;
-
+  // 데이터 로드 함수 (초기화 + 데이터 가져오기)
+  const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      // 배치로 모든 범위 가져오기
-      const batchData = await sheetsService.getBatchData([
-        'DB!A4:A',    // normals
-        'DB!B4:B',    // newbies
-        'DB!C4:C',    // leaders
-        'DB!G4:H40'   // filterPairs
-      ]);
+      const result = await dataService.initializeAndFetch(
+        '1IbHBh5SACa505qLB6eNZEARwRofDme_p1NmyRCL7xPA',
+        'DB'
+      );
 
-      // 데이터 가공
-      const normals = batchData['DB!A4:A'] ?
-        batchData['DB!A4:A'].flat().filter(item => item && item.trim()) : [];
-
-      const newbies = batchData['DB!B4:B'] ?
-        batchData['DB!B4:B'].flat().filter(item => item && item.trim()) : [];
-
-      const leaders = batchData['DB!C4:C'] ?
-        batchData['DB!C4:C'].flat().filter(item => item && item.trim()) : [];
-
-      const filterPairs = batchData['DB!G4:H40'] ?
-        batchData['DB!G4:H40'].filter(row => row && row.length >= 2 && row[0] && row[1]) : [];
-
-      setData({
-        normals,
-        newbies,
-        leaders,
-        filterPairs
-      });
-
+      if (result.success) {
+        setData(result.data);
+      } else {
+        setError(result.error);
+      }
     } catch (err) {
-      setError(err.message);
-      console.error('데이터 가져오기 실패:', err);
+      setError(`데이터 로드 실패: ${err.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  // 서비스 초기화 완료 시 데이터 가져오기
-  useEffect(() => {
-    if (sheetsService) {
-      fetchData();
+  // 데이터 새로고침 함수
+  const refreshData = async () => {
+    if (!dataService.getInitializationStatus()) {
+      await loadData(); // 초기화되지 않았다면 전체 로드
+      return;
     }
-  }, [sheetsService]);
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const freshData = await dataService.fetchDefaultData('DB');
+      setData(freshData);
+    } catch (err) {
+      setError(`새로고침 실패: ${err.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
-  if (initError) {
+  // 에러 상태 UI
+  if (error && !loading) {
     return (
       <div style={{ padding: '20px', color: 'red' }}>
-        <h2>초기화 오류</h2>
-        <p>{initError}</p>
-        <p>환경 변수 VITE_SERVICE_ACCOUNT_CREDENTIALS가 올바르게 설정되었는지 확인해주세요.</p>
-      </div>
-    );
-  }
-
-  if (!sheetsService) {
-    return (
-      <div style={{ padding: '20px' }}>
-        <p>서비스 초기화 중...</p>
+        <h2>오류</h2>
+        <p>{error}</p>
+        <button onClick={loadData} style={{ padding: '10px 20px', marginTop: '10px' }}>
+          다시 시도
+        </button>
+        <p style={{ marginTop: '10px', fontSize: '14px', color: '#666' }}>
+          환경 변수 VITE_SERVICE_ACCOUNT_CREDENTIALS가 올바르게 설정되었는지 확인해주세요.
+        </p>
       </div>
     );
   }
@@ -123,14 +97,43 @@ function SheetDataViewer() {
     );
   }
 
+  // 통계 정보 계산
+  const statistics = data.metadata ? dataService.getDataStatistics(data) : null;
+
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Google Sheets 데이터 뷰어</h1>
       <p>스프레드시트 ID: 1IbHBh5SACa505qLB6eNZEARwRofDme_p1NmyRCL7xPA</p>
 
-      <button onClick={fetchData} style={{ marginBottom: '20px', padding: '10px 20px' }}>
-        데이터 새로고침
-      </button>
+      <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px' }}>
+        <button
+          onClick={refreshData}
+          disabled={loading}
+          style={{
+            padding: '10px 20px',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            opacity: loading ? 0.6 : 1
+          }}
+        >
+          {loading ? '로딩 중...' : '데이터 새로고침'}
+        </button>
+
+        {statistics && (
+          <div style={{
+            backgroundColor: '#f0f0f0',
+            padding: '10px 15px',
+            borderRadius: '5px',
+            fontSize: '14px'
+          }}>
+            <strong>통계:</strong> 총 {statistics.totalItems}개 항목, {statistics.totalPairs}개 페어
+            {data.metadata?.fetchedAt && (
+              <span style={{ marginLeft: '10px', color: '#666' }}>
+                (마지막 업데이트: {new Date(data.metadata.fetchedAt).toLocaleString()})
+              </span>
+            )}
+          </div>
+        )}
+      </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '20px' }}>
         {/* Normals 섹션 */}
