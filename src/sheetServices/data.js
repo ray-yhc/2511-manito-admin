@@ -282,14 +282,13 @@ export class GoogleSheetsData {
         try {
             console.log(`📊 배치 데이터 조회 시작: ${ranges.length}개 범위`);
 
-            const encodedRanges = ranges.map(range => encodeURIComponent(range));
             const queryParams = new URLSearchParams({
                 valueRenderOption: DEFAULT_REQUEST_OPTIONS.valueRenderOption,
                 dateTimeRenderOption: DEFAULT_REQUEST_OPTIONS.dateTimeRenderOption
             });
 
             // 각 범위를 쿼리 파라미터로 추가
-            encodedRanges.forEach(range => queryParams.append('ranges', range));
+            ranges.forEach(range => queryParams.append('ranges', range));
 
             const url = `${this.config.api.baseUrl}/${spreadsheetId}/values:batchGet?${queryParams}`;
 
