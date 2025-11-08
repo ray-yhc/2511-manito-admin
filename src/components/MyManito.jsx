@@ -113,8 +113,8 @@ function MyManito() {
     // 로딩 상태
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-red-50 flex items-center justify-center p-4">
-                <div className="w-full max-w-md min-w-md">
+            <div className="min-h-screen bg-gradient-to-br from-pink-50  to-red-200 flex items-center justify-center p-4">
+                <div className="w-full max-w-md ">
                     <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
                         <div className="flex flex-col items-center">
                             <div className="text-7xl mb-6 animate-spin">🎁</div>
@@ -133,8 +133,8 @@ function MyManito() {
     // 에러 상태
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-red-50 via-pink-50 to-red-50 flex items-center justify-center p-4">
-                <div className="w-full max-w-md min-w-md">
+            <div className="min-h-screen bg-gradient-to-br from-pink-50  to-red-200 flex items-center justify-center p-4">
+                <div className="w-full max-w-md ">
                     <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
                         <div className="flex flex-col items-center">
                             <div className="text-7xl mb-6">⚠️</div>
@@ -159,8 +159,8 @@ function MyManito() {
     }
 
     return (
-        <div className="min-h-screen  bg-gradient-to-br from-red-50 via-pink-50 to-red-50 flex items-center justify-center p-4">
-            <div className="w-full max-w-md min-w-md">
+        <div className="min-h-screen  bg-gradient-to-br from-pink-50  to-red-200 flex items-center justify-center p-4">
+            <div className="w-full max-w-md ">
                 {!showResult ? (
                     // 검색 화면
                     <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
