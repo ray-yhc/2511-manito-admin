@@ -522,112 +522,48 @@ function SheetDataViewer() {
                             )}
                         </div>
 
-                        {/* 쌍 목록 - 모바일 친화적 디자인 */}
-                        <div className="space-y-4 sm:space-y-0">
-                            {/* 데스크톱 테이블 뷰 */}
-                            <div className="hidden sm:block overflow-x-auto bg-white rounded-xl shadow-md">
-                                <table className="w-full min-w-full">
-                                    <thead className="bg-green-600 text-white">
-                                        <tr>
-                                            <th className="px-6 py-4 text-left text-sm font-bold">#</th>
-                                            <th className="px-6 py-4 text-left text-sm font-bold">🎁 GIVER (주는 사람)</th>
-                                            <th className="px-6 py-4 text-center text-sm font-bold"></th>
-                                            <th className="px-6 py-4 text-left text-sm font-bold">🎯 RECEIVER (받는 사람)</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200">
-                                        {generatedPairs.pairs.map((pair, index) => (
-                                            <tr
-                                                key={pair.id}
-                                                className={`${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'} hover:bg-green-50 transition-colors duration-200`}
-                                            >
-                                                <td className="px-6 py-4 font-bold text-gray-600 text-lg">
-                                                    {pair.id}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-3">
-                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase text-white ${
-                                                            pair.giverType === 'normal' ? 'bg-blue-500' :
-                                                            pair.giverType === 'newbie' ? 'bg-green-500' : 'bg-orange-500'
-                                                        }`}>
-                                                            {pair.giverType}
-                                                        </span>
-                                                        <span className="font-semibold text-gray-900">{pair.giver}</span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <span className="text-2xl text-green-600">➡️</span>
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-3">
-                                                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase text-white ${
-                                                            pair.receiverType === 'normal' ? 'bg-blue-500' :
-                                                            pair.receiverType === 'newbie' ? 'bg-green-500' : 'bg-orange-500'
-                                                        }`}>
-                                                            {pair.receiverType}
-                                                        </span>
-                                                        <span className="font-semibold text-gray-900">{pair.receiver}</span>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            {/* 모바일 카드 뷰 */}
-                            <div className="sm:hidden space-y-4">
-                                {generatedPairs.pairs.map((pair, index) => (
-                                    <div key={pair.id} className="bg-white rounded-xl shadow-md p-4 border border-gray-200">
-                                        <div className="flex items-center justify-between mb-3">
-                                            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full font-bold text-sm">
-                                                #{pair.id}
-                                            </span>
-                                        </div>
-
-                                        <div className="space-y-4">
-                                            {/* Giver */}
-                                            <div className="bg-blue-50 rounded-lg p-3">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    <span className="text-lg">🎁</span>
-                                                    <span className="font-semibold text-blue-700">GIVER</span>
-                                                </div>
-                                                <div className="flex items-center gap-3">
-                                                    <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase text-white ${
+                        {/* 쌍 목록 - 컴팩트 테이블 */}
+                        <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+                            <table className="w-full text-sm">
+                                <thead className="bg-green-600 text-white">
+                                    <tr>
+                                        <th className="px-2 py-2 text-left font-semibold">#</th>
+                                        <th className="px-2 py-2 text-left font-semibold">GIVER</th>
+                                        <th className="px-2 py-2 text-left font-semibold">RECEIVER</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {generatedPairs.pairs.map((pair, index) => (
+                                        <tr key={pair.id} className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                                            <td className="px-2 py-2 font-medium text-gray-600">
+                                                {pair.id}
+                                            </td>
+                                            <td className="px-2 py-2">
+                                                <div className="flex items-center gap-1 flex-wrap">
+                                                    <span className="font-medium text-gray-900">{pair.giver}</span>
+                                                    <span className={`px-1.5 py-0.5 rounded text-xs font-medium text-white ${
                                                         pair.giverType === 'normal' ? 'bg-blue-500' :
                                                         pair.giverType === 'newbie' ? 'bg-green-500' : 'bg-orange-500'
                                                     }`}>
                                                         {pair.giverType}
                                                     </span>
-                                                    <span className="font-semibold text-gray-900 text-lg">{pair.giver}</span>
                                                 </div>
-                                            </div>
-
-                                            {/* Arrow */}
-                                            <div className="text-center">
-                                                <span className="text-3xl text-green-600">⬇️</span>
-                                            </div>
-
-                                            {/* Receiver */}
-                                            <div className="bg-orange-50 rounded-lg p-3">
-                                                <div className="flex items-center gap-2 mb-2">
-                                                    <span className="text-lg">🎯</span>
-                                                    <span className="font-semibold text-orange-700">RECEIVER</span>
-                                                </div>
-                                                <div className="flex items-center gap-3">
-                                                    <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase text-white ${
+                                            </td>
+                                            <td className="px-2 py-2">
+                                                <div className="flex items-center gap-1 flex-wrap">
+                                                    <span className="font-medium text-gray-900">{pair.receiver}</span>
+                                                    <span className={`px-1.5 py-0.5 rounded text-xs font-medium text-white ${
                                                         pair.receiverType === 'normal' ? 'bg-blue-500' :
                                                         pair.receiverType === 'newbie' ? 'bg-green-500' : 'bg-orange-500'
                                                     }`}>
                                                         {pair.receiverType}
                                                     </span>
-                                                    <span className="font-semibold text-gray-900 text-lg">{pair.receiver}</span>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
 
                         {/* 버튼들 */}

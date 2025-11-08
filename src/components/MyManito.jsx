@@ -4,9 +4,11 @@ import {getSheetDataService} from '../services/sheetDataService';
 function MyManito() {
     const [dataService] = useState(() => getSheetDataService());
     const [pairs, setPairs] = useState([]);
+    const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchName, setSearchName] = useState('');
+    const [searchPassword, setSearchPassword] = useState('');
     const [searching, setSearching] = useState(false);
     const [searchError, setSearchError] = useState('');
     const [foundReceiver, setFoundReceiver] = useState(null);
@@ -29,12 +31,14 @@ function MyManito() {
                 'DB'
             );
 
-            // J4:K1000 범위에서 쌍 데이터 가져오기
+            // J4:K1000 범위에서 쌍 데이터, M4:N1000 범위에서 사용자 인증 데이터 가져오기
             const batchData = await dataService.sheetsService.getBatchData([
-                'DB!J4:K1000'
+                'DB!J4:K1000',
+                'DB!M4:N1000'
             ]);
 
             const rawPairs = batchData['DB!J4:K1000'] || [];
+            const rawUsers = batchData['DB!M4:N1000'] || [];
 
             // 빈 값 필터링하고 유효한 쌍만 추출
             const validPairs = rawPairs
@@ -51,8 +55,24 @@ function MyManito() {
                     receiver: row[1].trim()
                 }));
 
+            // 사용자 인증 데이터 처리
+            const validUsers = rawUsers
+                .filter(row =>
+                    Array.isArray(row) &&
+                    row.length >= 2 &&
+                    row[0] && row[1] &&
+                    typeof row[0] === 'string' &&
+                    typeof row[1] === 'string' &&
+                    row[0].trim() && row[1].trim()
+                )
+                .map(row => ({
+                    name: row[0].trim(),
+                    password: row[1].trim()
+                }));
+
             setPairs(validPairs);
-            console.log(`✅ ${validPairs.length}개의 쌍 데이터를 로드했습니다.`);
+            setUsers(validUsers);
+            console.log(`✅ ${validPairs.length}개의 쌍 데이터와 ${validUsers.length}개의 사용자 데이터를 로드했습니다.`);
 
         } catch (err) {
             console.error('쌍 데이터 로드 실패:', err);
@@ -65,9 +85,15 @@ function MyManito() {
     // 검색 함수
     const handleSearch = async () => {
         const trimmedName = searchName.trim();
+        const trimmedPassword = searchPassword.trim();
 
         if (!trimmedName) {
             setSearchError('이름을 입력해주세요.');
+            return;
+        }
+
+        if (!trimmedPassword) {
+            setSearchError('비밀번호를 입력해주세요.');
             return;
         }
 
@@ -75,7 +101,22 @@ function MyManito() {
         setSearchError('');
 
         try {
-            // 대소문자 구분 없이 검색
+            // 1. 사용자 인증 확인 (대소문자 구분 없이)
+            const foundUser = users.find(user =>
+                user.name.toLowerCase() === trimmedName.toLowerCase()
+            );
+
+            if (!foundUser) {
+                setSearchError('존재하지 않는 사용자입니다. 이름을 확인해주세요.');
+                return;
+            }
+
+            if (foundUser.password !== trimmedPassword) {
+                setSearchError('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
+                return;
+            }
+
+            // 2. 인증 성공 후 기버-리시버 쌍 찾기
             const foundPair = pairs.find(pair =>
                 pair.giver.toLowerCase() === trimmedName.toLowerCase()
             );
@@ -83,9 +124,9 @@ function MyManito() {
             if (foundPair) {
                 setFoundReceiver(foundPair.receiver);
                 setShowResult(true);
-                console.log(`✅ ${trimmedName}님의 리시버를 찾았습니다: ${foundPair.receiver}`);
+                console.log(`✅ ${trimmedName}님이 인증되었고 리시버를 찾았습니다: ${foundPair.receiver}`);
             } else {
-                setSearchError('해당 이름의 기버를 찾을 수 없습니다. 이름을 정확히 입력해주세요.');
+                setSearchError('해당 사용자의 리시버 정보를 찾을 수 없습니다.');
             }
         } catch (err) {
             setSearchError('검색 중 오류가 발생했습니다.');
@@ -107,6 +148,7 @@ function MyManito() {
         setShowResult(false);
         setFoundReceiver(null);
         setSearchName('');
+        setSearchPassword('');
         setSearchError('');
     };
 
@@ -174,23 +216,43 @@ function MyManito() {
                         </div>
 
                         {/* 검색 입력 */}
-                        <div className="mb-6">
-                            <label htmlFor="searchName" className="block text-sm font-semibold text-gray-700 mb-3">
-                                나의 이름
-                            </label>
-                            <input
-                                id="searchName"
-                                type="text"
-                                value={searchName}
-                                onChange={(e) => setSearchName(e.target.value)}
-                                onKeyPress={handleKeyPress}
-                                placeholder="예: 홍길동"
-                                className="w-full px-5 py-4 border-2 border-gray-200 rounded-2xl text-lg
-                                         focus:border-red-400 focus:ring-4 focus:ring-red-100 focus:outline-none
-                                         transition-all duration-300 placeholder:text-gray-400"
-                                disabled={searching}
-                                autoComplete="off"
-                            />
+                        <div className="mb-6 space-y-4">
+                            <div>
+                                <label htmlFor="searchName" className="block text-sm font-semibold text-gray-700 mb-3">
+                                    나의 이름
+                                </label>
+                                <input
+                                    id="searchName"
+                                    type="text"
+                                    value={searchName}
+                                    onChange={(e) => setSearchName(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                    placeholder="예: 홍길동"
+                                    className="w-full px-5 py-4 border-2 border-gray-200 rounded-2xl text-lg
+                                             focus:border-red-400 focus:ring-4 focus:ring-red-100 focus:outline-none
+                                             transition-all duration-300 placeholder:text-gray-400"
+                                    disabled={searching}
+                                    autoComplete="off"
+                                />
+                            </div>
+                            <div>
+                                <label htmlFor="searchPassword" className="block text-sm font-semibold text-gray-700 mb-3">
+                                    비밀번호
+                                </label>
+                                <input
+                                    id="searchPassword"
+                                    type="password"
+                                    value={searchPassword}
+                                    onChange={(e) => setSearchPassword(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                    placeholder="비밀번호를 입력해주세요"
+                                    className="w-full px-5 py-4 border-2 border-gray-200 rounded-2xl text-lg
+                                             focus:border-red-400 focus:ring-4 focus:ring-red-100 focus:outline-none
+                                             transition-all duration-300 placeholder:text-gray-400"
+                                    disabled={searching}
+                                    autoComplete="off"
+                                />
+                            </div>
                         </div>
 
                         {/* 에러 메시지 */}
@@ -206,10 +268,10 @@ function MyManito() {
                         {/* 찾기 버튼 */}
                         <button
                             onClick={handleSearch}
-                            disabled={searching || !searchName.trim()}
+                            disabled={searching || !searchName.trim() || !searchPassword.trim()}
                             className={`w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 
                                       shadow-lg active:scale-95 ${
-                                searching || !searchName.trim()
+                                searching || !searchName.trim() || !searchPassword.trim()
                                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
                                     : 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white hover:shadow-xl'
                             }`}
@@ -232,7 +294,7 @@ function MyManito() {
                             <p className="text-blue-700 text-sm flex items-start gap-2">
                                 <span className="text-lg flex-shrink-0">💡</span>
                                 <span className="leading-relaxed">
-                                    정확한 이름을 입력해주세요. 대소문자는 구분하지 않습니다.
+                                    정확한 이름과 비밀번호를 입력해주세요.
                                 </span>
                             </p>
                         </div>
@@ -244,7 +306,7 @@ function MyManito() {
                         <div className="text-center mb-8">
                             <div className="text-7xl sm:text-8xl mb-6 animate-bounce">🎉</div>
                             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 leading-relaxed">
-                                나의 Receiver는
+                                나의 윈터는
                             </h2>
                             <div className="bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl p-6 mb-4">
                                 <p className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text
