@@ -155,7 +155,8 @@ function MyManito() {
     // 로딩 상태
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-pink-50  to-red-200 flex items-center justify-center p-4">
+            <div
+                className="min-h-screen bg-gradient-to-br from-pink-50  to-red-200 flex items-center justify-center p-4">
                 <div className="w-full max-w-md ">
                     <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
                         <div className="flex flex-col items-center">
@@ -163,7 +164,8 @@ function MyManito() {
                             <h2 className="text-2xl font-bold text-gray-800 mb-3">데이터 로딩 중</h2>
                             <p className="text-gray-500 text-sm mb-6">마니또 쌍 정보를 가져오고 있습니다</p>
                             <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                                <div className="bg-gradient-to-r from-red-500 to-pink-500 h-full rounded-full animate-pulse w-3/4"></div>
+                                <div
+                                    className="bg-gradient-to-r from-red-500 to-pink-500 h-full rounded-full transition-all duration-1000 ease-out animate-loading-bar"></div>
                             </div>
                         </div>
                     </div>
@@ -175,7 +177,8 @@ function MyManito() {
     // 에러 상태
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-pink-50  to-red-200 flex items-center justify-center p-4">
+            <div
+                className="min-h-screen bg-gradient-to-br from-pink-50  to-red-200 flex items-center justify-center p-4">
                 <div className="w-full max-w-md ">
                     <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
                         <div className="flex flex-col items-center">
@@ -208,9 +211,9 @@ function MyManito() {
                     <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
                         {/* 제목과 아이콘 */}
                         <div className="text-center mb-8">
-                            <div className="text-6xl sm:text-7xl mb-4">🎯</div>
+                            <p className="text-gray-700 text-lg">두근두근</p>
                             <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
-                                내 윈터 찾기
+                                💌 내 윈터 찾기
                             </h1>
                             <p className="text-gray-500 text-sm">이름을 입력하여 확인하세요</p>
                         </div>
@@ -236,7 +239,8 @@ function MyManito() {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="searchPassword" className="block text-sm font-semibold text-gray-700 mb-3">
+                                <label htmlFor="searchPassword"
+                                       className="block text-sm font-semibold text-gray-700 mb-3">
                                     비밀번호
                                 </label>
                                 <input
@@ -304,15 +308,20 @@ function MyManito() {
                     <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
                         {/* 성공 애니메이션과 결과 */}
                         <div className="text-center mb-8">
-                            <div className="text-7xl sm:text-8xl mb-6 animate-bounce">🎉</div>
                             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 leading-relaxed">
                                 나의 윈터는
                             </h2>
-                            <div className="bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl p-6 mb-4">
-                                <p className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text
-                                            bg-gradient-to-r from-red-500 to-pink-500 break-words">
-                                    {foundReceiver}
-                                </p>
+                            <div className="bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl p-6 mb-4 relative">
+                                <span className="relative inline-block w-full">
+                                    <p className="absolute inset-0 animate-ping  opacity-25 text-4xl sm:text-5xl font-black text-transparent bg-clip-text
+                                                bg-gradient-to-r from-red-500 to-pink-500 break-words">
+                                        {foundReceiver}
+                                    </p>
+                                    <p className="relative text-4xl sm:text-5xl font-black text-transparent bg-clip-text
+                                                bg-gradient-to-r from-red-500 to-pink-500 break-words">
+                                        {foundReceiver}
+                                    </p>
+                                </span>
                             </div>
                             <p className="text-xl sm:text-2xl font-bold text-gray-800">
                                 입니다!
@@ -322,11 +331,12 @@ function MyManito() {
                         {/* 축하 메시지 */}
                         <div className="bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200
                                       rounded-2xl p-6 mb-6">
-                            <div className="text-5xl mb-4 text-center">🎁</div>
                             <p className="text-gray-700 font-medium text-center leading-relaxed">
-                                축하합니다!<br/>
-                                <strong className="text-red-600">{foundReceiver}</strong>님에게<br/>
-                                따뜻한 선물을 준비해보세요!
+                                <p className="text-red-600"> ※ 오픈채팅방 입장 안내 ※</p><br/>
+                                오늘 저녁 8시경에 청1단톡방을 통해<br/>
+                                오픈채팅방 링크를 공유해드릴 예정입니다.<br/><br/>
+                                <strong className="text-red-600">{foundReceiver}의 마니또</strong> 닉네임으로 입장해주세요.<br/>
+                                그럼 2주간 행복한 마니또 되시길 바랍니다! 🎉
                             </p>
                         </div>
 
