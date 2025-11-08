@@ -83,8 +83,7 @@ function MyManito() {
             if (foundPair) {
                 setFoundReceiver(foundPair.receiver);
                 setShowResult(true);
-                console.log(`✅ ${trimmedName}님의 리시버를 찾았습니다: 
-     ${foundPair.receiver}`);
+                console.log(`✅ ${trimmedName}님의 리시버를 찾았습니다: ${foundPair.receiver}`);
             } else {
                 setSearchError('해당 이름의 기버를 찾을 수 없습니다. 이름을 정확히 입력해주세요.');
             }
@@ -114,19 +113,16 @@ function MyManito() {
     // 로딩 상태
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 flex
-     items-center justify-center p-4">
-                <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full
-     text-center">
-                    <div className="animate-spin text-6xl mb-6">🎁</div>
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4">데이터 로딩
-                        중...</h2>
-                    <p className="text-gray-600 leading-relaxed">마니또 쌍 정보를 가져오고
-                        있습니다.</p>
-                    <div className="mt-6">
-                        <div className="bg-red-100 rounded-full h-2 overflow-hidden">
-                            <div className="bg-red-500 h-full rounded-full animate-pulse
-     w-3/4"></div>
+            <div className="min-h-screen bg-gradient-to-br from-pink-50  to-red-200 flex items-center justify-center p-4">
+                <div className="w-full max-w-md ">
+                    <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
+                        <div className="flex flex-col items-center">
+                            <div className="text-7xl mb-6 animate-spin">🎁</div>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-3">데이터 로딩 중</h2>
+                            <p className="text-gray-500 text-sm mb-6">마니또 쌍 정보를 가져오고 있습니다</p>
+                            <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                                <div className="bg-gradient-to-r from-red-500 to-pink-500 h-full rounded-full animate-pulse w-3/4"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -137,49 +133,50 @@ function MyManito() {
     // 에러 상태
     if (error) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 flex
-     items-center justify-center p-4">
-                <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full
-     text-center">
-                    <div className="text-6xl mb-6">⚠️</div>
-                    <h2 className="text-2xl font-bold text-red-600 mb-4">오류 발생</h2>
-                    <p className="text-gray-700 mb-6 leading-relaxed break-words">{error}</p>
-                    <button
-                        onClick={loadPairData}
-                        className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6
-     py-3 rounded-xl
-                                      transition-all duration-300 shadow-md hover:shadow-lg
-     transform hover:scale-105 w-full"
-                    >
-                        🔄 다시 시도
-                    </button>
+            <div className="min-h-screen bg-gradient-to-br from-pink-50  to-red-200 flex items-center justify-center p-4">
+                <div className="w-full max-w-md ">
+                    <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
+                        <div className="flex flex-col items-center">
+                            <div className="text-7xl mb-6">⚠️</div>
+                            <h2 className="text-2xl font-bold text-red-600 mb-3">오류 발생</h2>
+                            <p className="text-gray-600 text-sm text-center mb-8 leading-relaxed break-words">{error}</p>
+                            <button
+                                onClick={loadPairData}
+                                className="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600
+                                         text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300
+                                         shadow-lg hover:shadow-xl active:scale-95"
+                            >
+                                <span className="flex items-center justify-center gap-2">
+                                    <span>🔄</span>
+                                    <span>다시 시도</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 p-4">
-            <div className="max-w-md mx-auto pt-12">
+        <div className="min-h-screen  bg-gradient-to-br from-pink-50  to-red-200 flex items-center justify-center p-4">
+            <div className="w-full max-w-md ">
                 {!showResult ? (
                     // 검색 화면
-                    <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+                    <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
                         {/* 제목과 아이콘 */}
-                        <div className="mb-8">
-                            <div className="text-6xl mb-4">🎯</div>
-                            <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                                내 리시버 찾기
+                        <div className="text-center mb-8">
+                            <div className="text-6xl sm:text-7xl mb-4">🎯</div>
+                            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
+                                내 윈터 찾기
                             </h1>
-                            <p className="text-gray-600 text-sm">
-                                {pairs.length}개의 마니또 쌍이 준비되어 있습니다
-                            </p>
+                            <p className="text-gray-500 text-sm">이름을 입력하여 확인하세요</p>
                         </div>
 
                         {/* 검색 입력 */}
                         <div className="mb-6">
-                            <label htmlFor="searchName" className="block text-sm
-     font-semibold text-gray-700 mb-3 text-left">
-                                나의 이름을 입력하세요
+                            <label htmlFor="searchName" className="block text-sm font-semibold text-gray-700 mb-3">
+                                나의 이름
                             </label>
                             <input
                                 id="searchName"
@@ -188,23 +185,20 @@ function MyManito() {
                                 onChange={(e) => setSearchName(e.target.value)}
                                 onKeyPress={handleKeyPress}
                                 placeholder="예: 홍길동"
-                                className="w-full px-4 py-4 border-2 border-gray-200
-     rounded-xl text-center text-lg
-                                              focus:border-red-400 focus:ring-2 focus:ring-red-100
-      focus:outline-none
-                                              transition-all duration-300"
+                                className="w-full px-5 py-4 border-2 border-gray-200 rounded-2xl text-lg
+                                         focus:border-red-400 focus:ring-4 focus:ring-red-100 focus:outline-none
+                                         transition-all duration-300 placeholder:text-gray-400"
                                 disabled={searching}
+                                autoComplete="off"
                             />
                         </div>
 
                         {/* 에러 메시지 */}
                         {searchError && (
-                            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg
-     p-4">
-                                <p className="text-red-700 text-sm font-medium flex
-     items-center justify-center gap-2">
-                                    <span>⚠️</span>
-                                    {searchError}
+                            <div className="mb-6 bg-red-50 border-2 border-red-200 rounded-2xl p-4">
+                                <p className="text-red-700 text-sm font-medium flex items-center gap-2">
+                                    <span className="text-lg">⚠️</span>
+                                    <span>{searchError}</span>
                                 </p>
                             </div>
                         )}
@@ -213,61 +207,63 @@ function MyManito() {
                         <button
                             onClick={handleSearch}
                             disabled={searching || !searchName.trim()}
-                            className={`w-full py-4 rounded-xl font-bold text-lg 
-     transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 ${
+                            className={`w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 
+                                      shadow-lg active:scale-95 ${
                                 searching || !searchName.trim()
-                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white'
+                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
+                                    : 'bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white hover:shadow-xl'
                             }`}
                         >
                             {searching ? (
                                 <span className="flex items-center justify-center gap-2">
-                                         <div className="animate-spin">🔍</div>
-                                         검색 중...
-                                     </span>
+                                    <div className="animate-spin text-xl">🔍</div>
+                                    <span>검색 중...</span>
+                                </span>
                             ) : (
                                 <span className="flex items-center justify-center gap-2">
-                                         <span>🔍</span>
-                                         찾기
-                                     </span>
+                                    <span className="text-xl">🔍</span>
+                                    <span>찾기</span>
+                                </span>
                             )}
                         </button>
 
                         {/* 안내 메시지 */}
-                        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg
-     p-4">
+                        <div className="mt-6 bg-blue-50 border-2 border-blue-200 rounded-2xl p-4">
                             <p className="text-blue-700 text-sm flex items-start gap-2">
-                                <span className="text-base">💡</span>
-                                <span>
-                                         정확한 이름을 입력해주세요. 대소문자는 구분하지 않습니다.
-                                     </span>
+                                <span className="text-lg flex-shrink-0">💡</span>
+                                <span className="leading-relaxed">
+                                    정확한 이름을 입력해주세요. 대소문자는 구분하지 않습니다.
+                                </span>
                             </p>
                         </div>
                     </div>
                 ) : (
                     // 결과 화면
-                    <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+                    <div className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8">
                         {/* 성공 애니메이션과 결과 */}
-                        <div className="mb-8">
-                            <div className="text-8xl mb-6 animate-bounce">🎉</div>
-                            <h1 className="text-2xl font-bold text-gray-800 mb-6
-     leading-relaxed">
-                                나의 Receiver는<br/>
-                                <span className="text-4xl font-black text-transparent
-     bg-clip-text bg-gradient-to-r from-red-500 to-pink-500">
-                                         {foundReceiver}
-                                     </span>
-                                <br/>입니다!
-                            </h1>
+                        <div className="text-center mb-8">
+                            <div className="text-7xl sm:text-8xl mb-6 animate-bounce">🎉</div>
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 leading-relaxed">
+                                나의 Receiver는
+                            </h2>
+                            <div className="bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl p-6 mb-4">
+                                <p className="text-4xl sm:text-5xl font-black text-transparent bg-clip-text
+                                            bg-gradient-to-r from-red-500 to-pink-500 break-words">
+                                    {foundReceiver}
+                                </p>
+                            </div>
+                            <p className="text-xl sm:text-2xl font-bold text-gray-800">
+                                입니다!
+                            </p>
                         </div>
 
                         {/* 축하 메시지 */}
-                        <div className="bg-gradient-to-r from-red-50 to-pink-50 border
-     border-red-200 rounded-xl p-6 mb-8">
-                            <div className="text-4xl mb-3">🎁</div>
-                            <p className="text-gray-700 font-medium leading-relaxed">
+                        <div className="bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200
+                                      rounded-2xl p-6 mb-6">
+                            <div className="text-5xl mb-4 text-center">🎁</div>
+                            <p className="text-gray-700 font-medium text-center leading-relaxed">
                                 축하합니다!<br/>
-                                <strong>{foundReceiver}</strong>님에게<br/>
+                                <strong className="text-red-600">{foundReceiver}</strong>님에게<br/>
                                 따뜻한 선물을 준비해보세요!
                             </p>
                         </div>
@@ -275,15 +271,14 @@ function MyManito() {
                         {/* 다시 검색하기 버튼 */}
                         <button
                             onClick={handleSearchAgain}
-                            className="w-full bg-gray-500 hover:bg-gray-600 text-white
-     font-semibold py-3 rounded-xl
-                                          transition-all duration-300 shadow-md hover:shadow-lg
-     transform hover:scale-105"
+                            className="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-6
+                                     rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl
+                                     active:scale-95"
                         >
-                                 <span className="flex items-center justify-center gap-2">
-                                     <span>🔍</span>
-                                     다시 검색하기
-                                 </span>
+                            <span className="flex items-center justify-center gap-2">
+                                <span className="text-xl">🔍</span>
+                                <span>다시 검색하기</span>
+                            </span>
                         </button>
                     </div>
                 )}
