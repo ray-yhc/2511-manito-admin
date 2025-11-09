@@ -126,7 +126,7 @@ function MyManito() {
                 setShowResult(true);
                 console.log(`✅ ${trimmedName}님이 인증되었고 리시버를 찾았습니다: ${foundPair.receiver}`);
             } else {
-                setSearchError('해당 사용자의 리시버 정보를 찾을 수 없습니다.');
+                setSearchError('해당 사용자의 정보를 찾을 수 없습니다.');
             }
         } catch (err) {
             setSearchError('검색 중 오류가 발생했습니다.');
@@ -339,6 +339,20 @@ function MyManito() {
                                 그럼 2주간 행복한 마니또 되시길 바랍니다! 🎉
                             </p>
                         </div>
+
+                        {/* 단톡방 입장하기 버튼 */}
+                        <button
+                            onClick={() => window.open('https://open.kakao.com/o/gDt2o80h', '_blank')}
+                            className="w-full bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600
+                                hover:to-pink-600 text-white hover:shadow-xl
+                                font-bold py-4 px-6 rounded-2xl transition-all duration-300
+                                shadow-lg hover:shadow-xl active:scale-95 mb-4"
+                        >
+                            <span className="flex items-center justify-center gap-2">
+                                <span className="text-xl">💬</span>
+                                <span>단톡방 입장하기</span>
+                            </span>
+                        </button>
 
                         {/* 다시 검색하기 버튼 */}
                         <button
