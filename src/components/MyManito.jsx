@@ -333,9 +333,9 @@ function MyManito() {
                                       rounded-2xl p-6 mb-6">
                             <p className="text-gray-700 font-medium text-center leading-relaxed">
                                 <p className="text-red-600"> ※ 오픈채팅방 입장 안내 ※</p><br/>
-                                오늘 저녁 8시경에 청1단톡방을 통해<br/>
-                                오픈채팅방 링크를 공유해드릴 예정입니다.<br/><br/>
-                                <strong className="text-red-600">{foundReceiver}의 마니또</strong> 닉네임으로 입장해주세요.<br/>
+                                아래 오픈채팅방 입장 링크로<br/>
+                                입장해주세요<br/><br/>
+                                <strong className="text-red-600">{foundReceiver}의 마니또</strong> 닉네임으로 설정하기!<br/>
                                 그럼 2주간 행복한 마니또 되시길 바랍니다! 🎉
                             </p>
                         </div>
